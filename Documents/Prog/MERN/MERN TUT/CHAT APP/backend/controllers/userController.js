@@ -7,7 +7,7 @@ const generateToken = require('../config/generateToken')
 
 const registerUser = asyncHandler(async(req, res) => {
     const user = await User.create(req.body)
-    res.status(StatusCodes.CREATED).json({ user: { nam: user.name, username: user.username, email: user.email, picture: user.picture, id: user._id }, token: generateToken(user._id, user.name, user.email) })
+    res.status(StatusCodes.CREATED).json({ user: { name: user.name, username: user.username, email: user.email, picture: user.picture, id: user._id }, token: generateToken(user._id, user.name, user.email) })
 })
 
 
@@ -18,7 +18,7 @@ const authUser = asyncHandler(async(req, res) => {
     }
     const user = await User.findOne({ email })
     if (user && (await user.matchPassword(password))) {
-        res.status(StatusCodes.OK).json({ user: { nam: user.name, email: user.email, picture: user.picture, id: user._id }, token: generateToken(user._id, user.email, user.name) })
+        res.status(StatusCodes.OK).json({ user: { name: user.name, email: user.email, picture: user.picture, id: user._id }, token: generateToken(user._id, user.email, user.name) })
     } else {
         throw new UnAuthoriztion('Incorrect Email or Password.')
     }
@@ -26,7 +26,10 @@ const authUser = asyncHandler(async(req, res) => {
 
 const getAllUser = asyncHandler(async(req, res) => {
     const keyword = req.query.search ? {
-        $or: [{ name: { $regex: req.query.name, $options: 'i' } }, { email: { $regex: req.query.email, $options: 'i' } }]
+        $or: [
+            { name: { $regex: req.query.search, $options: 'i' } },
+            { email: { $regex: req.query.search, $options: 'i' } }
+        ]
     } : {}
     const findUser = await User.find(keyword).find({ _id: { $ne: req.fish.id } })
     res.status(StatusCodes.OK).json({ nbHit: findUser.length, findUser })
@@ -37,4 +40,10 @@ const getEveryUser = asyncHandler(async(req, res) => {
     const users = await User.find({})
     res.status(StatusCodes.OK).json({ nbHit: users.length, users })
 })
-module.exports = { registerUser, authUser, getAllUser, getEveryUser }
+
+const getUser = asyncHandler(async(req, res) => {
+    const { userId } = req.body
+    const user = await User.findOne({ _id: userId }).select("-password")
+    res.status(StatusCodes.OK).json(user)
+})
+module.exports = { registerUser, authUser, getAllUser, getEveryUser, getUser }

@@ -11,6 +11,7 @@ import { TypeModel } from '../component/searchModel'
 import { ChatState } from '../contenxt/chatContext'
 import MessageBlock from '../component/messageBlock'
 import {SelfMessageBlock} from '../component/messageBlock'
+import ScrollableChat from '../component/scrollableChat'
 
 const Home = () => {
     const [showSearchModel, setShowSearchModel] = useState(false)
@@ -29,7 +30,7 @@ const Home = () => {
             <Grid h='100%' templateRows='repeat(1, 1fr)' bg={'#27374D'} templateColumns='repeat(10, 1fr)' gap={1}>
                 <GridItem rowSpan={1} colSpan={3} >
                     <Grid templateRows='repeat(11, 1fr)' height={'100%'}>
-                        <GridItem rowSpan={1} borderRadius={'.3rem'} h={'100%'}  bg={'#27374D'}>
+                        <GridItem rowSpan={1} borderRadius={'.3rem'} h={'100%'}  bg={'#27374D'} borderBottom={'1px solid #526D82'}>
                             <Flex h={'100%'}>
                                 <Box p='4'>
                                     <Text className='app-name'>Anagram</Text>
@@ -81,15 +82,8 @@ const Home = () => {
                                 </Box>
                             </Flex>
                         </GridItem>
-                        <GridItem rowSpan={9} bg={'#526D82'} overflowY={'auto'} >
-                            <Box h={'81.5vh'}  overflowY={'auto'} p={3.5}>
-
-                                {selfMessageHolder.map((data, ind)=>{
-                                    return(
-                                        <SelfMessageBlock data={data} key={ind}/>
-                                    )
-                                })}
-                            </Box>
+                        <GridItem rowSpan={9} bg={'#526D82'} overflowY={'auto'}  h={'80vh'} p={3.5}>
+                            <ScrollableChat />
                         </GridItem>
                         <GridItem rowSpan={1} bg={'#27374D'} display={'flex'} alignItems={'center'} borderTopRightRadius={'.35rem'} borderTopLeftRadius={'.35rem'} pl={'.5rem'} pr={'.5rem'}>
                             <TypeModel />

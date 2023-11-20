@@ -37,7 +37,6 @@ export const TypeModel = ()=>{
                 navigate('/')
             }
             setSelfMessageHolder([...selfMessageHolder,{ content: type, id: myId}])
-            // console.log('myid', loggedInUser, chatInfo);
             // --------logiing to console--------------
             let token = localStorage.getItem('token')
             if (token !== null) {   
@@ -47,7 +46,6 @@ export const TypeModel = ()=>{
                         "Authorization": `Bearer ${token}`
                     }
                 })
-                console.log('message added successfully');
                 } catch (err) {
                     console.log(err);
                 }

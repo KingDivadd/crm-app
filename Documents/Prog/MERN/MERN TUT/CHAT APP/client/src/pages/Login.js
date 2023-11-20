@@ -22,7 +22,7 @@ export default function Login() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [alert, setAlert] = useState({boo: false, value: '', serverity: ''})
-    const {loggedInUser, setLoggedInUser} = ChatState()
+    const {user, setUser} = ChatState()
 
     const navigate = useNavigate()
 
@@ -47,7 +47,9 @@ export default function Login() {
                 navigate('/home')
             }, 2000);
             setAlert({boo: true, value: 'Login Successfun', serverity: 'success'})
-            setLoggedInUser({id: res.data.user.id})
+            console.log(res.data.user)
+            setUser(res.data.user)
+
             localStorage.setItem("token", res.data.token)
             localStorage.setItem("id", res.data.user.id)
         } catch (err) {

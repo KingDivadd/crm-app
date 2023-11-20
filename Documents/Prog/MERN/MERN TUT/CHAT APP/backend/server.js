@@ -37,11 +37,26 @@ app.use('/api/message', messageRoutes)
 app.use(errorHandlerMidware)
 app.use(notFound)
 
-const PORT = process.env.PORT | 5500
+const PORT = process.env.PORT || 5500
 const start = async() => {
     try {
         await connectDB()
-        app.listen(PORT, console.log(`App running on port ${PORT}`.cyan.bold))
+        const server = app.listen(PORT, console.log(`App running on port ${PORT}`.cyan.bold))
+        const io = require('socket.io')(server, {
+            pingTimeout: 60000,
+            cors: {
+                origin: 'http://localhost:3000'
+            }
+        })
+        io.on("connection", (socket) => {
+            console.log('Connected to socket.io successully'.yellow.bold);
+
+            socket.on('setup', (userData) => {
+                socket.join(userData.id)
+                console.log(userData.id);
+                socket.emit("Connected".cyan.bold)
+            })
+        })
     } catch (err) {
         console.log(err)
     }

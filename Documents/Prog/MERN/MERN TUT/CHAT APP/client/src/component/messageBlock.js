@@ -3,18 +3,6 @@ import React, {useEffect, useState} from 'react'
 import { ChatState } from '../contenxt/chatContext'
 import { useNavigate } from 'react-router-dom'
 
-const MessageBlock = () => {
-    const {messageHolder} = ChatState()
-    return (
-        <Box className='message-element' mb={'.5rem'}>
-            <Box className='message-avatar' display={'none'}>
-                <Avatar size={'sm'}  name='Dan Abrahmov' src='https://bit.ly/dan-abramov' />
-            </Box>
-                <h4 className='chat-message'>{messageHolder.content}</h4>
-        </Box>
-    )
-}
-
 export const SelfMessageBlock = ({data})=>{
     const {selfMessageHolder, loggedInUser} = ChatState()
     const [color, setColor] = useState(true)
@@ -35,7 +23,6 @@ export const SelfMessageBlock = ({data})=>{
             setImage(true)
             let notMeIndex = selfMessageHolder.indexOf(data);
             if (notMeIndex > 0 && selfMessageHolder[notMeIndex].id === selfMessageHolder[notMeIndex - 1].id) {
-                console.log('yeah still me')
                 setImage(false)
             }
         }
@@ -52,5 +39,3 @@ export const SelfMessageBlock = ({data})=>{
         </HStack>
     )
 }
-
-export default MessageBlock

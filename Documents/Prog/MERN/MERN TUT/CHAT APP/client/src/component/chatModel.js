@@ -4,13 +4,18 @@ import { Container, Grid, GridItem, Flex, Box, Spacer, HStack, Text, Wrap, WrapI
 import {FaCaretDown, FaCaretUp} from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { ChatState } from '../contenxt/chatContext'
+import io from 'socket.io-client'
+
+const ENDPOINT = "http://localhost:5500";
+var socket, selectedChatCompare;
 
 
 const ChatModel = ()=>{ 
     const [chatSelected, setChatSelected] = useState(false)
     const [fetchChat, setFetchChat] = useState([])
+    const [socketConnected, setSocketConnected] = useState(false)
     const navigate = useNavigate()
-    const {chatInfo, setChatInfo, loggedInUser, selfMessageHolder, setSelfMessageHolder} = ChatState()
+    const {setChatInfo, setSelfMessageHolder, user, setUser} = ChatState()
 
 
     const allChat = async()=>{
@@ -30,6 +35,18 @@ const ChatModel = ()=>{
             navigate('/login')
         }
     }
+    const connectToSocket = ()=>{
+        if (localStorage.getItem('id') !== null) {
+            setUser({...user, _id: localStorage.getItem('id')})
+            console.log(user)
+            socket = io(ENDPOINT)
+            socket.emit = ("setup", user._id)
+            socket.on("connection", ()=> setSocketConnected(true))  
+        }
+        else{
+            navigate('/')
+        }
+    }
     useEffect(()=>{
         allChat()
     },[])
@@ -42,15 +59,12 @@ const ChatModel = ()=>{
                         "Authorization": `Bearer ${token}`
                     }
                 })
-            console.log(message.data.allmessages)
             let data = message.data.allmessages
-            console.log('fish', data);
             let cage = []
             data.forEach(res => {
                 let del = {content: res.content, id: res.sender._id};
                 cage.push(del)
             });
-            console.log(cage)
             setSelfMessageHolder(cage)
 
         } catch (err) {
@@ -59,6 +73,7 @@ const ChatModel = ()=>{
     }
 
     function handleSelectChat(data) {
+        connectToSocket()
         setChatInfo(data)
         let id = data._id
         fetchMessage(id)
