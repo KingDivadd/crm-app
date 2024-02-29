@@ -1,0 +1,41 @@
+datasource db {
+  provider = "postgresql" // or the database provider you're using
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+model Users {
+  user_id       String   @id @default(uuid()) 
+  last_name     String
+  first_name    String
+  other_names   String?
+  email         String   @unique
+  gender        String?
+  date_of_birth String?   
+  avatar        String?
+  country_code  String?
+  phone_number  String?
+  referral_code String?
+
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  // Define relationship with Auth model
+  Auth          Auth?
+}
+
+model Auth {
+  auth_id       String   @id @default(uuid())
+  unique_code   String
+  password      String
+
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  // Define relationship with Users model
+  user          Users    @relation(fields: [user_id], references: [user_id])
+  user_id       String   @unique   
+}
+
